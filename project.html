@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My To-Do List</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik+Microbe&display=swap" rel="stylesheet">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        
+        h1 {
+            color: #424242;
+            /* font-family: "Rubik Microbe", system-ui; */
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+        
+        #taskInput {
+            width: 70%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 10px;
+        }
+        
+        #addButton {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #62bc65;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+        
+        #addButton:hover {
+            background-color: #738e74;
+        }
+        
+        #taskList {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+        
+        .task-item {
+            background-color: white;
+            padding: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+        
+        .task-item.done {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+        
+        .delete-btn {
+            background-color: #f85549;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        
+        .delete-btn:hover {
+            background-color: #755f5e;
+        }
+    </style>
+</head>
+<body>
+    <h1><strong><i class="fa-solid fa-quote-left"></i> My  To-Do  List <i class="fa-solid fa-quote-right"></i></strong></h1>
+    
+    <div>
+        <input type="text" id="taskInput" placeholder="Enter a new task...">
+        <button id="addButton">Add Task</button>
+    </div>
+    
+    <ul id="taskList"></ul>
+    
+    <script>
+        let taskInput = document.getElementById('taskInput');
+        let addButton = document.getElementById('addButton');
+        let taskList = document.getElementById('taskList');
+        
+        addButton.onclick = function() {
+            addTask();
+        };
+        
+        taskInput.onkeypress = function(event) {
+            if (event.key === 'Enter') {
+                addTask();
+            }
+        };
+        
+        function addTask() {
+            let taskText = taskInput.value;
+            
+            if (taskText === '') {
+                alert('Please enter a task!');
+                return;
+            }
+            
+            let li = document.createElement('li');
+            li.className = 'task-item';
+            
+            let span = document.createElement('span');
+            span.textContent = taskText;
+            
+            let deleteBtn = document.createElement('button');
+            deleteBtn.textContent = 'Delete';
+            deleteBtn.className = 'delete-btn';
+            
+            span.onclick = function() {
+                li.classList.toggle('done');
+                playDingSound();
+            };
+            
+            deleteBtn.onclick = function() {
+                taskList.removeChild(li);
+            };
+            
+            li.appendChild(span);
+            li.appendChild(deleteBtn);
+            taskList.appendChild(li);
+            
+            taskInput.value = '';
+        }
+        
+        function playDingSound() {
+            let audioContext = new AudioContext();
+            let oscillator = audioContext.createOscillator();
+            let gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = 800; 
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+        }
+    </script>
+</body>
+</html>
